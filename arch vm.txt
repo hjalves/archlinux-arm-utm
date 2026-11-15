@@ -1,0 +1,39 @@
+
+# archboot
+
+systemctl start pacman-init systemd-networkd systemd-resolved
+
+printf 'label: gpt\n,512M,U\n,,L\n' | sfdisk /dev/vda
+mkfs.fat -F32 /dev/vda1
+mkfs.ext4 /dev/vda2
+
+mount /dev/vda2 /mnt
+mount --mkdir /dev/vda1 /mnt/boot
+
+pacstrap -K /mnt base linux archlinuxarm-keyring efibootmgr nano
+genfstab -U /mnt >> /mnt/etc/fstab
+
+arch-chroot -S /mnt
+
+echo 'root:root' | chpasswd
+ln -sf /usr/share/zoneinfo/Europe/Lisbon /etc/localtime
+sed -i 's/^#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen
+locale-gen
+echo "LANG=en_US.UTF-8" > /etc/locale.conf
+echo "arch" > /etc/hostname
+
+cp /usr/lib/systemd/network/89-ethernet.network.example /etc/systemd/network/20-ethernet.network
+systemctl enable systemd-networkd systemd-resolved
+
+mkinitcpio -P
+# bootctl install
+efibootmgr --create \
+  --disk /dev/vda \
+  --part 1 \
+  --label "Arch Linux" \
+  --loader /Image \
+  --unicode "Image root=UUID=$(findmnt -no UUID /) rw initrd=\initramfs-linux.img"
+
+exit
+
+umount /mnt/boot /mnt/
