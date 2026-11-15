@@ -68,9 +68,14 @@ local VM, but change it before the box goes anywhere else.
   the same internal name as a VM in UTM. `package-box.sh` now prevents this. Rebuild.
 - **Every VM gets SSH port 2250, and a second VM fails with "Could not set up host
   forwarding rule"**: Vagrant 2.4.9's bundled Ruby reports refused ports as open on this
-  macOS, so Vagrant thinks 2200–2250 are all taken. `lib/port_check_fix.rb` replaces the
-  check; any Vagrantfile using this box should `require_relative` it, as `Vagrantfile` and
-  `../claude-sandbox/Vagrantfile` do.
+  macOS, so Vagrant thinks 2200–2250 are all taken. The cause is a macOS 26.7+/27 kernel
+  change (a retried `connect()` on a refused socket returns `EISCONN`). Ruby fixed it in 3.4+
+  but not in the 3.3 that Vagrant bundles; see [Ruby #22223](https://bugs.ruby-lang.org/issues/22223)
+  and [Vagrant #13845](https://github.com/hashicorp/vagrant/issues/13845).
+  `lib/port_check_fix.rb` replaces the check; `Vagrantfile` and
+  `../claude-sandbox/Vagrantfile` `require_relative` it, so the repo works on any Mac. To fix
+  every project on a machine, put the same code in `~/.vagrant.d/Vagrantfile`, which Vagrant
+  loads before each project's Vagrantfile. Remove both once Vagrant ships a fix.
 - **First AppleScript call hangs**: macOS may be asking for permission to let your terminal
   control UTM. Allow it in the prompt, or under System Settings → Privacy & Security →
   Automation.
