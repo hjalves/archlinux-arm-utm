@@ -75,6 +75,11 @@ SRC="$STAGE/box.utm"
 # fails on `vagrant up` with "an item with the same name already exists".
 BOXED_NAME="vagrant-box-$(date +%Y%m%d%H%M%S)"
 plutil -replace Information.Name -string "$BOXED_NAME" "$SRC/config.plist"
+# Likewise a fresh UUID: UTM keeps the box's UUID on import when it's free, so
+# without this every Vagrant VM would reuse the build VM's UUID (which the
+# guest also sees as its machine ID).
+plutil -replace Information.UUID -string "$(uuidgen)" "$SRC/config.plist"
+plutil -replace Information.Notes -string "Vagrant box built from ClaudeArch/vagrant" "$SRC/config.plist"
 echo "==> Boxed VM name: $BOXED_NAME"
 
 # Check the settings the plugin depends on.
