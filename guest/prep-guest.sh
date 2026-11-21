@@ -46,8 +46,9 @@ else
   echo "warning: could not install qemu-guest-agent; vagrant up will print a warning" >&2
 fi
 
-log "Enabling sshd and networking"
-systemctl enable sshd.service systemd-networkd.service systemd-resolved.service
+log "Enabling sshd, networking and package-cache cleanup"
+# paccache.timer (pacman-contrib, installed by pacstrap) trims the package cache weekly.
+systemctl enable sshd.service systemd-networkd.service systemd-resolved.service paccache.timer
 
 # DHCP on every Ethernet card. The box has two (Shared + Emulated VLAN) and
 # both need an address.

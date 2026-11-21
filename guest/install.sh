@@ -51,7 +51,15 @@ mount "$(part 2)" /mnt
 mount --mkdir "$(part 1)" /mnt/boot
 
 log "Installing the base system (pacstrap, a few minutes)"
-if ! pacstrap -K /mnt base linux archlinuxarm-keyring efibootmgr nano >/root/pacstrap.log 2>&1; then
+# Beyond base: tools every VM from this box needs to be managed and repaired.
+#   dosfstools        fsck.fat, so systemd-fsck checks the FAT32 /boot at boot (fstab pass 2)
+#                     and clears its dirty bit after an unclean stop; otherwise it's skipped
+#   cloud-guest-utils growpart, to grow the root partition after enlarging the disk in UTM
+#   rsync             needed in the guest for Vagrant's rsync synced folders
+#   pacman-contrib    paccache (+ weekly timer) to keep the package cache off a small disk
+#   less              pager for journalctl/systemctl; base doesn't include one
+if ! pacstrap -K /mnt base linux archlinuxarm-keyring efibootmgr nano \
+    dosfstools cloud-guest-utils rsync pacman-contrib less >/root/pacstrap.log 2>&1; then
   tail -30 /root/pacstrap.log
   die "pacstrap failed"
 fi
