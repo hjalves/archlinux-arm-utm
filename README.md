@@ -9,6 +9,8 @@ from scratch with Archboot, unattended:
 
 About 10 minutes later you have `arch.box`, registered with Vagrant as `local/arch`.
 
+The [claude-sandbox](https://github.com/hjalves/claude-sandbox) VM is built on this box.
+
 Requires: UTM 5 in `/Applications`, Vagrant with the `vagrant_utm` plugin (0.2.0+), and
 Python 3. Tested with UTM 5.0.8, Vagrant 2.4.9, vagrant_utm 0.2.0 and Archboot 7.3.4-2.
 
@@ -72,8 +74,8 @@ local VM, but change it before the box goes anywhere else.
   change (a retried `connect()` on a refused socket returns `EISCONN`). Ruby fixed it in 3.4+
   but not in the 3.3 that Vagrant bundles; see [Ruby #22223](https://bugs.ruby-lang.org/issues/22223)
   and [Vagrant #13845](https://github.com/hashicorp/vagrant/issues/13845).
-  `lib/port_check_fix.rb` replaces the check; `Vagrantfile` and
-  `../claude-sandbox/Vagrantfile` `require_relative` it, so the repo works on any Mac. To fix
+  `lib/port_check_fix.rb` replaces the check; the `Vagrantfile` `require_relative`s it, so
+  the repo works on any Mac. Copy it into other projects that use the box. To fix
   every project on a machine, put the same code in `~/.vagrant.d/Vagrantfile`, which Vagrant
   loads before each project's Vagrantfile. Remove both once Vagrant ships a fix.
 - **First AppleScript call hangs**: macOS may be asking for permission to let your terminal

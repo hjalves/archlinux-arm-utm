@@ -9,4 +9,7 @@
 .vagrant/
 
 # Build cache (ISOs, console logs)
-vagrant/.cache/
+.cache/
+
+# Python bytecode
+__pycache__/

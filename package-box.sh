@@ -79,7 +79,7 @@ plutil -replace Information.Name -string "$BOXED_NAME" "$SRC/config.plist"
 # without this every Vagrant VM would reuse the build VM's UUID (which the
 # guest also sees as its machine ID).
 plutil -replace Information.UUID -string "$(uuidgen)" "$SRC/config.plist"
-plutil -replace Information.Notes -string "Vagrant box built from ClaudeArch/vagrant" "$SRC/config.plist"
+plutil -replace Information.Notes -string "Vagrant box built from archlinux-arm-utm" "$SRC/config.plist"
 echo "==> Boxed VM name: $BOXED_NAME"
 
 # Check the settings the plugin depends on.

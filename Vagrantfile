@@ -27,7 +27,7 @@ Vagrant.configure("2") do |config|
     u.cpus   = 2
     u.memory = 2048
     u.icon   = "arch-linux"
-    u.notes  = "Managed by Vagrant (ClaudeArch/vagrant)"
+    u.notes  = "Managed by Vagrant (archlinux-arm-utm)"
   end
 
   # config.vm.provision "shell", inline: <<-SHELL
